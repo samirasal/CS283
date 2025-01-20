@@ -173,11 +173,12 @@ int main(int argc, char *argv[]){
     }
 
     user_str_len = setup_buff(buff, input_string, BUFFER_SZ);     //see todos
-    if (user_str_len < 0){
-        fprintf("Error setting up buffer, error = %d", user_str_len);
-        free(buff);
-        exit(2);
-    }
+    if (user_str_len < 0) {
+    fprintf(stderr, "Error setting up buffer, error = %d\n", user_str_len);
+    free(buff);
+    exit(2);
+}
+
 
     switch (opt){
         case 'c':

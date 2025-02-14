@@ -66,7 +66,7 @@ int build_cmd_list(char *cmd_line, command_list_t *clist)
 
     memset(clist, 0, sizeof(command_list_t));
 
-    char *cmd_copy = strdup(cmd_line); // Make a copy to avoid modifying the original
+    char *cmd_copy = strdup(cmd_line); 
     if (cmd_copy == NULL)
     {
         return WARN_NO_CMDS;
@@ -83,12 +83,12 @@ int build_cmd_list(char *cmd_line, command_list_t *clist)
             return ERR_TOO_MANY_COMMANDS;
         }
 
-        trim_spaces(token); // Trim the command
+        trim_spaces(token); 
 
         if (strlen(token) == 0) 
         {
             free(cmd_copy);
-            return WARN_NO_CMDS; // If a command is empty, warn the user
+            return WARN_NO_CMDS; 
         }
 
         char *cmd_name = strtok(token, " ");
@@ -101,16 +101,16 @@ int build_cmd_list(char *cmd_line, command_list_t *clist)
         strncpy(clist->commands[cmd_count].exe, cmd_name, EXE_MAX - 1);
         clist->commands[cmd_count].exe[EXE_MAX - 1] = '\0';
 
-        char *args = strtok(NULL, ""); // Capture remaining arguments
+        char *args = strtok(NULL, ""); 
         if (args)
         {
-            trim_spaces(args); // Ensure arguments don't have extra spaces
+            trim_spaces(args); 
             strncpy(clist->commands[cmd_count].args, args, ARG_MAX - 1);
             clist->commands[cmd_count].args[ARG_MAX - 1] = '\0';
         }
 
         cmd_count++;
-        token = strtok(NULL, PIPE_STRING); // Get next command
+        token = strtok(NULL, PIPE_STRING); 
     }
 
     clist->num = cmd_count;

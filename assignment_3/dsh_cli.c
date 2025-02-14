@@ -118,7 +118,6 @@ int main()
 
         int rc = build_cmd_list(cmd_buff, &clist);
 
-        
         if (rc == WARN_NO_CMDS)
         {
             printf("%s", CMD_WARN_NO_CMD);

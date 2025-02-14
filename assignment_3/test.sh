@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
 @test "Simple Command" 
-   { run ./dsh <<EOF                
+    { run ./dsh <<EOF                
 test_command
 exit
 EOF

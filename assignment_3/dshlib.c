@@ -40,10 +40,15 @@ void trim_spaces(char *str)
         return;
 
     // Trim leading spaces
-    while (*str == SPACE_CHAR)
-        str++;
-
-    // Trim trailing spaces
+    char *start = str;
+    while (*start == SPACE_CHAR)
+        start++;
+    
+    // Move trimmed string to the beginning
+    if (start != str)
+        memmove(str, start, strlen(start) + 1);
+    
+        // Trim trailing spaces
     char *end = str + strlen(str) - 1;
     while (end > str && *end == SPACE_CHAR)
         *end-- = '\0';
@@ -52,49 +57,63 @@ void trim_spaces(char *str)
 
 
 
- int build_cmd_list(char *cmd_line, command_list_t *clist)
+int build_cmd_list(char *cmd_line, command_list_t *clist)
 {
     if (cmd_line == NULL || strlen(cmd_line) == 0)
     {
-        return WARN_NO_CMDS; 
+        return WARN_NO_CMDS;
     }
 
-    memset(clist, 0, sizeof(command_list_t)); 
+    memset(clist, 0, sizeof(command_list_t));
 
-    char *token = strtok(cmd_line, PIPE_STRING); 
+    char *cmd_copy = strdup(cmd_line); // Make a copy to avoid modifying the original
+    if (cmd_copy == NULL)
+    {
+        return WARN_NO_CMDS;
+    }
+
+    char *token = strtok(cmd_copy, PIPE_STRING);
     int cmd_count = 0;
 
     while (token != NULL)
     {
         if (cmd_count >= CMD_MAX)
         {
-            return ERR_TOO_MANY_COMMANDS; 
+            free(cmd_copy);
+            return ERR_TOO_MANY_COMMANDS;
         }
-        trim_spaces(token);
-        
-        // while (*token == SPACE_CHAR) token++;
-        // char *end = token + strlen(token) - 1;
-        // while (end > token && *end == SPACE_CHAR) *end-- = '\0';
 
-      
+        trim_spaces(token); // Trim the command
+
+        if (strlen(token) == 0) 
+        {
+            free(cmd_copy);
+            return WARN_NO_CMDS; // If a command is empty, warn the user
+        }
+
         char *cmd_name = strtok(token, " ");
         if (cmd_name == NULL)
-            return WARN_NO_CMDS; 
+        {
+            free(cmd_copy);
+            return WARN_NO_CMDS;
+        }
 
         strncpy(clist->commands[cmd_count].exe, cmd_name, EXE_MAX - 1);
         clist->commands[cmd_count].exe[EXE_MAX - 1] = '\0';
-        
-        char *args = strtok(NULL, ""); 
+
+        char *args = strtok(NULL, ""); // Capture remaining arguments
         if (args)
         {
+            trim_spaces(args); // Ensure arguments don't have extra spaces
             strncpy(clist->commands[cmd_count].args, args, ARG_MAX - 1);
             clist->commands[cmd_count].args[ARG_MAX - 1] = '\0';
         }
-        
+
         cmd_count++;
-        token = strtok(NULL, PIPE_STRING); 
+        token = strtok(NULL, PIPE_STRING); // Get next command
     }
 
     clist->num = cmd_count;
-    return OK; 
+    free(cmd_copy);
+    return OK;
 }

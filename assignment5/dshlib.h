@@ -66,7 +66,7 @@ void exec_cd(cmd_buff_t *cmd);
 void exec_local_cmd_loop();
 int exec_cmd(cmd_buff_t *cmd);
 void exec_external_cmd(cmd_buff_t *cmd);
-int execute_pipeline(command_list_t *clist);
+void execute_pipeline(command_list_t *clist);
 
 // Command buffer management
 int alloc_cmd_buff(cmd_buff_t *cmd_buff);

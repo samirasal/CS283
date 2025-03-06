@@ -1,27 +1,27 @@
-# Compiler settings
+# Makefile for compiling demonstration C files
+
+# Compiler
 CC = gcc
+
+# Standard compiler flags
 CFLAGS = -Wall -Wextra -g
 
-# Target executable name
-TARGET = dsh
+# Source files
+SOURCES = fork-pipe.c fork-pipeline.c
 
-# Find all source and header files
-SRCS = $(wildcard *.c)
-HDRS = $(wildcard *.h)
+# Executable names (remove .c extension for executables)
+EXECUTABLES = $(SOURCES:.c=)
 
-# Default target
-all: $(TARGET)
+# Default target: build all executables
+all: $(EXECUTABLES)
 
-# Compile source to executable
-$(TARGET): $(SRCS) $(HDRS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRCS)
+# Rule for standard compilation
+$(EXECUTABLES): %: %.c
+	$(CC) $(CFLAGS) -o $@ $<
 
-# Clean up build files
+# Clean up compiled files
 clean:
-	rm -f $(TARGET)
-
-test:
-	./test.sh
+	rm -f $(EXECUTABLES) 
 
 # Phony targets
 .PHONY: all clean

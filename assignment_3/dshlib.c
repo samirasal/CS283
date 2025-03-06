@@ -7,11 +7,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-
-#include "dshlib.h"
-
-
-
+#include "dshlib.h"  // Include the header file for necessary definitions
 
 /*
  *  build_cmd_list
@@ -19,7 +15,7 @@
  *    clist *:      pointer to clist structure to be populated
  *
  *  This function builds the command_list_t structure passed by the caller
- *  It does this by first splitting the cmd_line into commands by spltting
+ *  It does this by first splitting the cmd_line into commands by splitting
  *  the string based on any pipe characters '|'.  It then traverses each
  *  command.  For each command (a substring of cmd_line), it then parses
  *  that command by taking the first token as the executable name, and
@@ -56,7 +52,7 @@ void trim_spaces(char *str)
     if (start != str)
         memmove(str, start, strlen(start) + 1);
     
-        // Trim trailing spaces
+    // Trim trailing spaces
     char *end = str + strlen(str) - 1;
     while (end > str && *end == SPACE_CHAR)
         *end-- = '\0';
@@ -79,7 +75,6 @@ Built_In_Cmds exec_built_in_cmd(cmd_buff_t *cmd) {
     return BI_NOT_BI;  // Not a built-in command
 }
 
-
 void exec_cd(cmd_buff_t *cmd) {
     if (cmd->argc < 2) {
         return;  // Do nothing if no directory is provided
@@ -89,8 +84,6 @@ void exec_cd(cmd_buff_t *cmd) {
         perror("cd failed");
     }
 }
-
-
 
 void parse_input(char *input, cmd_buff_t *cmd) {
     cmd->argc = 0;
@@ -127,8 +120,8 @@ void parse_input(char *input, cmd_buff_t *cmd) {
     cmd->argv[cmd->argc] = NULL;  // Null-terminate the argument list
 }
 
-
 void exec_local_cmd_loop() {
+    // Check for multiple commands and execute them using pipes
     char *line = NULL;
     size_t len = 0;
     cmd_buff_t cmd;
@@ -148,41 +141,61 @@ void exec_local_cmd_loop() {
             if (result == BI_CMD_EXIT) {
                 break;  // Exit the shell
             } else if (result == BI_NOT_BI) {
-                exec_external_cmd(&cmd);  // Handle external commands
+                exec_piped_cmds(&cmd);  // Handle piped commands
             }
         }
     }
     free(line);
 }
 
+void exec_piped_cmds(cmd_buff_t *cmd) {
+    int pipefd[2];
+    pid_t pid;
+    int i;
 
-void exec_external_cmd(cmd_buff_t *cmd) {
-    pid_t pid = fork();
-    
-    if (pid < 0) {
-        perror("fork failed");
-        return;
-    }
+    for (i = 0; i < cmd->argc; i++) {
+        // Create a pipe for each command except the last one
+        if (i < cmd->argc - 1) {
+            pipe(pipefd);
+        }
 
-    if (pid == 0) {
-        // Ensure PATH is set before calling execvp
-        setenv("PATH", "/usr/bin:/bin", 1);
+        pid = fork();
+        if (pid < 0) {
+            perror("fork failed");
+            return;
+        }
 
-        // Child process executes the command
-        execvp(cmd->argv[0], cmd->argv);
+        if (pid == 0) {  // Child process
+            if (i > 0) {  // If not the first command, get input from the previous pipe
+                dup2(pipefd[0], STDIN_FILENO);
+            }
+            if (i < cmd->argc - 1) {  // If not the last command, output to the next pipe
+                dup2(pipefd[1], STDOUT_FILENO);
+            }
 
-        // If execvp fails, print error and exit
-        perror("execvp failed");
-        exit(EXIT_FAILURE);
-    } else {
-        // Parent process waits for the child to complete
-        int status;
-        waitpid(pid, &status, 0);
+            // Close pipe file descriptors
+            close(pipefd[0]);
+            close(pipefd[1]);
+
+            // Execute the command
+            execvp(cmd->argv[i], cmd->argv);
+            perror("execvp failed");
+            exit(EXIT_FAILURE);
+        } else {  // Parent process
+            // Close the write end of the pipe in the parent
+            if (i < cmd->argc - 1) {
+                close(pipefd[1]);
+            }
+            // Close the read end of the pipe in the parent
+            if (i > 0) {
+                close(pipefd[0]);
+            }
+
+            // Wait for the child process to complete
+            waitpid(pid, NULL, 0);
+        }
     }
 }
-
-
-
 
 int build_cmd_list(char *cmd_line, command_list_t *clist)
 {
@@ -225,15 +238,16 @@ int build_cmd_list(char *cmd_line, command_list_t *clist)
             return WARN_NO_CMDS;
         }
 
-        strncpy(clist->commands[cmd_count].exe, cmd_name, EXE_MAX - 1);
-        clist->commands[cmd_count].exe[EXE_MAX - 1] = '\0';
+        strncpy(clist->commands[cmd_count]._cmd_buffer, cmd_name, EXE_MAX);
+        clist->commands[cmd_count]._cmd_buffer[EXE_MAX - 1] = '\0';
 
         char *args = strtok(NULL, ""); 
         if (args)
         {
             trim_spaces(args); 
-            strncpy(clist->commands[cmd_count].args, args, ARG_MAX - 1);
-            clist->commands[cmd_count].args[ARG_MAX - 1] = '\0';
+        strncpy(clist->commands[cmd_count].argv[1], args, ARG_MAX);
+        clist->commands[cmd_count].argv[1][ARG_MAX - 1] = '\0';
+
         }
 
         cmd_count++;

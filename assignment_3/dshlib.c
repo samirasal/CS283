@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-<<<<<<< HEAD
 #include <ctype.h>
 #include <unistd.h>  // Required for chdir()
 #include <errno.h>  
@@ -8,6 +7,7 @@
 #include <sys/wait.h>
 
 #include "dshlib.h"  // Include the header file for necessary definitions
+#include <cstdlib>
 
 /*
  *  build_cmd_list
@@ -201,65 +201,6 @@ int build_cmd_list(char *cmd_line, command_list_t *clist)
 {
     if (cmd_line == NULL || strlen(cmd_line) == 0)
     {
-=======
-#include <stdlib.h>
-#include "dshlib.h"
-
-// Store ASCII Art in a character array
-const char *dragon_data[] = {
-    "                                                                         @%%%%",                       
-    "                                                                     %%%%%%",                         
-    "                                                                    %%%%%%",                          
-    "                                                                 % %%%%%%%           @",              
-    "                                                                %%%%%%%%%%        %%%%%%%",           
-    "                                       %%%%%%%  %%%%@         %%%%%%%%%%%%@    %%%%%%  @%%%%",        
-    "                                  %%%%%%%%%%%%%%%%%%%%%%      %%%%%%%%%%%%%%%%%%%%%%%%%%%%",          
-    "                                %%%%%%%%%%%%%%%%%%%%%%%%%%   %%%%%%%%%%%% %%%%%%%%%%%%%%%",           
-    "                               %%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%     %%%",            
-    "                             %%%%%%%%%%%%%%%%%%%%%%%%%%%%@ @%%%%%%%%%%%%%%%%%%        %%",            
-    "                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%",                
-    "                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%",              
-    "                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@%%%%%%@",              
-    "      %%%%%%%%@           %%%%%%%%%%%%%%%%        %%%%%%%%%%%%%%%%%%%%%%%%%%      %%",                
-    "    %%%%%%%%%%%%%         %%@%%%%%%%%%%%%           %%%%%%%%%%% %%%%%%%%%%%%      @%",                
-    "  %%%%%%%%%%   %%%        %%%%%%%%%%%%%%            %%%%%%%%%%%%%%%%%%%%%%%%",                        
-    " %%%%%%%%%       %         %%%%%%%%%%%%%             %%%%%%%%%%%%@%%%%%%%%%%%",                       
-    "%%%%%%%%%@                % %%%%%%%%%%%%%            @%%%%%%%%%%%%%%%%%%%%%%%%%",                     
-    "%%%%%%%%@                 %%@%%%%%%%%%%%%            @%%%%%%%%%%%%%%%%%%%%%%%%%%%%",                  
-    "%%%%%%%@                   %%%%%%%%%%%%%%%           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%",              
-    "%%%%%%%%%%                  %%%%%%%%%%%%%%%          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      %%%%",  
-    "%%%%%%%%%@                   @%%%%%%%%%%%%%%         %%%%%%%%%%%%@ %%%% %%%%%%%%%%%%%%%%%   %%%%%%%%",
-    "%%%%%%%%%%                  %%%%%%%%%%%%%%%%%        %%%%%%%%%%%%%      %%%%%%%%%%%%%%%%%% %%%%%%%%%",
-    "%%%%%%%%%@%%@                %%%%%%%%%%%%%%%%@       %%%%%%%%%%%%%%     %%%%%%%%%%%%%%%%%%%%%%%%  %%",
-    " %%%%%%%%%%                  % %%%%%%%%%%%%%%@        %%%%%%%%%%%%%%   %%%%%%%%%%%%%%%%%%%%%%%%%% %%",
-    "  %%%%%%%%%%%%  @           %%%%%%%%%%%%%%%%%%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  %%%",
-    "   %%%%%%%%%%%%% %%  %  %@ %%%%%%%%%%%%%%%%%%          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    %%%",
-    "    %%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%           @%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    %%%%%%%",
-    "     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              %%%%%%%%%%%%%%%%%%%%%%%%%%%%        %%%",
-    "      @%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  %%%%%%%%%%%%%%%%%%%%%%%%%",
-    "        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      %%%%%%%%%%%%%%%%%%%  %%%%%%%",
-    "           %%%%%%%%%%%%%%%%%%%%%%%%%%                           %%%%%%%%%%%%%%%  @%%%%%%%%%",
-    "              %%%%%%%%%%%%%%%%%%%%           @%@%                  @%%%%%%%%%%%%%%%%%%   %%%",
-    "                  %%%%%%%%%%%%%%%        %%%%%%%%%%                    %%%%%%%%%%%%%%%    %",
-    "                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      %%%%%%%%%%%%%%",
-    "                %%%%%%%%%%%%%%%%%%%%%%%%%%  %%%% %%%                      %%%%%%%%%%  %%%@",
-    "                     %%%%%%%%%%%%%%%%%%% %%%%%% %%                          %%%%%%%%%%%%%@",
-    "                                                                                 %%%%%%%@",
-    NULL
-};
-
-// Function to print the ASCII dragon
-void print_dragon() {
-    for (int i = 0; dragon_data[i] != NULL; i++) {
-        printf("%s\n", dragon_data[i]);
-    }
-}
-
-
-int build_cmd_list(char *cmd_line, command_list_t *clist) {
-    if (cmd_line == NULL || clist == NULL || strlen(cmd_line) == 0) {
-        printf(CMD_WARN_NO_CMD);
->>>>>>> d80efd7c1aea8ad79c90227b9aab67e4d7540d0e
         return WARN_NO_CMDS;
     }
 
@@ -293,7 +234,7 @@ int build_cmd_list(char *cmd_line, command_list_t *clist) {
             return ERR_CMD_OR_ARGS_TOO_BIG;
         }
 
-<<<<<<< HEAD
+
         strncpy(clist->commands[cmd_count]._cmd_buffer, cmd_name, EXE_MAX);
         clist->commands[cmd_count]._cmd_buffer[EXE_MAX - 1] = '\0';
 
@@ -304,7 +245,7 @@ int build_cmd_list(char *cmd_line, command_list_t *clist) {
         strncpy(clist->commands[cmd_count].argv[1], args, ARG_MAX);
         clist->commands[cmd_count].argv[1][ARG_MAX - 1] = '\0';
 
-=======
+
         // Extract executable and arguments
         char *space_pos = strchr(token, SPACE_CHAR);
         if (space_pos != NULL) {
@@ -314,7 +255,7 @@ int build_cmd_list(char *cmd_line, command_list_t *clist) {
         } else {
             strncpy(clist->commands[cmd_index].exe, token, EXE_MAX - 1);
             clist->commands[cmd_index].args[0] = '\0';  // No arguments
->>>>>>> d80efd7c1aea8ad79c90227b9aab67e4d7540d0e
+
         }
 
         clist->num++;
@@ -332,7 +273,4 @@ int build_cmd_list(char *cmd_line, command_list_t *clist) {
 
     return OK;
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> d80efd7c1aea8ad79c90227b9aab67e4d7540d0e
+}

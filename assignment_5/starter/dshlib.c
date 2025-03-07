@@ -7,16 +7,16 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "dshlib.h"  // Assumes dshlib.h defines constants like CMD_MAX, CMD_ARGV_MAX, SH_CMD_MAX, PIPE_STRING, PIPE_CHAR, OK, WARN_NO_CMDS, ERR_TOO_MANY_COMMANDS, ERR_EXEC_CMD, etc.
+#include "dshlib.h" 
 
 #define INPUT_BUFFER 1024
 
-/* Helper function: Trim leading and trailing whitespace */
+
 void trim_whitespace(char *str) {
     if (str == NULL)
         return;
     
-    // Trim leading spaces
+    
     char *start = str;
     while (*start && isspace((unsigned char)*start))
         start++;
@@ -24,7 +24,7 @@ void trim_whitespace(char *str) {
     if (start != str)
         memmove(str, start, strlen(start) + 1);
     
-    // Trim trailing spaces
+  
     size_t len = strlen(str);
     while (len > 0 && isspace((unsigned char)str[len - 1])) {
         str[len - 1] = '\0';
@@ -41,7 +41,7 @@ int tokenize_command(char *command_str, cmd_buff_t *cmd) {
     
     char *p = command_str;
     while (*p) {
-        // Skip any whitespace
+      
         while (*p && isspace((unsigned char)*p))
             p++;
         if (*p == '\0')
@@ -49,7 +49,7 @@ int tokenize_command(char *command_str, cmd_buff_t *cmd) {
         
         char *token = NULL;
         if (*p == '"') {
-            // Token begins after the quote
+            
             p++;
             token = p;
             while (*p && *p != '"')
@@ -107,7 +107,7 @@ int build_command_list(char *input, command_list_t *cmd_list) {
    The function returns OK if all children are spawned and waited upon successfully. */
 int execute_pipeline(command_list_t *cmd_list) {
     int num_cmds = cmd_list->num;
-    int prev_read_fd = -1;  // Holds the read end of the previous pipe
+    int prev_read_fd = -1;  
     pid_t pids[CMD_MAX];
     
     for (int i = 0; i < num_cmds; i++) {
@@ -125,7 +125,7 @@ int execute_pipeline(command_list_t *cmd_list) {
             return ERR_EXEC_CMD;
         }
         
-        if (pids[i] == 0) {  // Child process
+        if (pids[i] == 0) {  
             if (prev_read_fd != -1) {
                 dup2(prev_read_fd, STDIN_FILENO);
                 close(prev_read_fd);
@@ -138,7 +138,7 @@ int execute_pipeline(command_list_t *cmd_list) {
             execvp(cmd_list->commands[i].argv[0], cmd_list->commands[i].argv);
             perror("execution error");
             exit(EXIT_FAILURE);
-        } else {  // Parent process
+        } else {  
             if (prev_read_fd != -1)
                 close(prev_read_fd);
             if (i < num_cmds - 1) {
@@ -148,7 +148,7 @@ int execute_pipeline(command_list_t *cmd_list) {
         }
     }
     
-    // Parent waits for all children
+    
     for (int i = 0; i < num_cmds; i++) {
         int status;
         waitpid(pids[i], &status, 0);
@@ -193,7 +193,7 @@ int exec_local_cmd_loop() {
             break;
         }
         
-        // Remove the trailing newline and trim input
+       
         line[strcspn(line, "\n")] = '\0';
         trim_whitespace(line);
         if (strlen(line) == 0) {

@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "dshlib.h"  // Assumes dshlib.h defines constants like CMD_ARGV_MAX, OK, WARN_NO_CMDS, ERR_TOO_MANY_COMMANDS, etc.
+#include "dshlib.h"  
 
 /* Helper function: Trim leading and trailing whitespace */
 void trim_whitespace(char *str) {
@@ -39,7 +39,7 @@ int tokenize_command(char *command_str, cmd_buff_t *cmd) {
     
     char *p = command_str;
     while (*p) {
-        // Skip any whitespace
+       
         while (*p && isspace((unsigned char)*p))
             p++;
         if (*p == '\0')
@@ -47,7 +47,7 @@ int tokenize_command(char *command_str, cmd_buff_t *cmd) {
         
         char *token = NULL;
         if (*p == '"') {
-            // Token begins after the quote
+
             p++;
             token = p;
             while (*p && *p != '"')
@@ -140,7 +140,7 @@ int exec_local_cmd_loop() {
             continue;
         }
         
-        // Process as a single command (external command)
+        // This function processes as a single command (external command)
         cmd_buff_t single_cmd;
         if (tokenize_command(line, &single_cmd) != OK) {
             fprintf(stderr, "Error: invalid command\n");

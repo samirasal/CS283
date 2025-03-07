@@ -1,6 +1,6 @@
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+<<<<<<< HEAD
 #include <ctype.h>
 #include <unistd.h>  // Required for chdir()
 #include <errno.h>  
@@ -201,43 +201,99 @@ int build_cmd_list(char *cmd_line, command_list_t *clist)
 {
     if (cmd_line == NULL || strlen(cmd_line) == 0)
     {
+=======
+#include <stdlib.h>
+#include "dshlib.h"
+
+// Store ASCII Art in a character array
+const char *dragon_data[] = {
+    "                                                                         @%%%%",                       
+    "                                                                     %%%%%%",                         
+    "                                                                    %%%%%%",                          
+    "                                                                 % %%%%%%%           @",              
+    "                                                                %%%%%%%%%%        %%%%%%%",           
+    "                                       %%%%%%%  %%%%@         %%%%%%%%%%%%@    %%%%%%  @%%%%",        
+    "                                  %%%%%%%%%%%%%%%%%%%%%%      %%%%%%%%%%%%%%%%%%%%%%%%%%%%",          
+    "                                %%%%%%%%%%%%%%%%%%%%%%%%%%   %%%%%%%%%%%% %%%%%%%%%%%%%%%",           
+    "                               %%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%     %%%",            
+    "                             %%%%%%%%%%%%%%%%%%%%%%%%%%%%@ @%%%%%%%%%%%%%%%%%%        %%",            
+    "                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%",                
+    "                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%",              
+    "                            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@%%%%%%@",              
+    "      %%%%%%%%@           %%%%%%%%%%%%%%%%        %%%%%%%%%%%%%%%%%%%%%%%%%%      %%",                
+    "    %%%%%%%%%%%%%         %%@%%%%%%%%%%%%           %%%%%%%%%%% %%%%%%%%%%%%      @%",                
+    "  %%%%%%%%%%   %%%        %%%%%%%%%%%%%%            %%%%%%%%%%%%%%%%%%%%%%%%",                        
+    " %%%%%%%%%       %         %%%%%%%%%%%%%             %%%%%%%%%%%%@%%%%%%%%%%%",                       
+    "%%%%%%%%%@                % %%%%%%%%%%%%%            @%%%%%%%%%%%%%%%%%%%%%%%%%",                     
+    "%%%%%%%%@                 %%@%%%%%%%%%%%%            @%%%%%%%%%%%%%%%%%%%%%%%%%%%%",                  
+    "%%%%%%%@                   %%%%%%%%%%%%%%%           %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%",              
+    "%%%%%%%%%%                  %%%%%%%%%%%%%%%          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      %%%%",  
+    "%%%%%%%%%@                   @%%%%%%%%%%%%%%         %%%%%%%%%%%%@ %%%% %%%%%%%%%%%%%%%%%   %%%%%%%%",
+    "%%%%%%%%%%                  %%%%%%%%%%%%%%%%%        %%%%%%%%%%%%%      %%%%%%%%%%%%%%%%%% %%%%%%%%%",
+    "%%%%%%%%%@%%@                %%%%%%%%%%%%%%%%@       %%%%%%%%%%%%%%     %%%%%%%%%%%%%%%%%%%%%%%%  %%",
+    " %%%%%%%%%%                  % %%%%%%%%%%%%%%@        %%%%%%%%%%%%%%   %%%%%%%%%%%%%%%%%%%%%%%%%% %%",
+    "  %%%%%%%%%%%%  @           %%%%%%%%%%%%%%%%%%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  %%%",
+    "   %%%%%%%%%%%%% %%  %  %@ %%%%%%%%%%%%%%%%%%          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    %%%",
+    "    %%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%           @%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    %%%%%%%",
+    "     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%              %%%%%%%%%%%%%%%%%%%%%%%%%%%%        %%%",
+    "      @%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                  %%%%%%%%%%%%%%%%%%%%%%%%%",
+    "        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      %%%%%%%%%%%%%%%%%%%  %%%%%%%",
+    "           %%%%%%%%%%%%%%%%%%%%%%%%%%                           %%%%%%%%%%%%%%%  @%%%%%%%%%",
+    "              %%%%%%%%%%%%%%%%%%%%           @%@%                  @%%%%%%%%%%%%%%%%%%   %%%",
+    "                  %%%%%%%%%%%%%%%        %%%%%%%%%%                    %%%%%%%%%%%%%%%    %",
+    "                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                      %%%%%%%%%%%%%%",
+    "                %%%%%%%%%%%%%%%%%%%%%%%%%%  %%%% %%%                      %%%%%%%%%%  %%%@",
+    "                     %%%%%%%%%%%%%%%%%%% %%%%%% %%                          %%%%%%%%%%%%%@",
+    "                                                                                 %%%%%%%@",
+    NULL
+};
+
+// Function to print the ASCII dragon
+void print_dragon() {
+    for (int i = 0; dragon_data[i] != NULL; i++) {
+        printf("%s\n", dragon_data[i]);
+    }
+}
+
+
+int build_cmd_list(char *cmd_line, command_list_t *clist) {
+    if (cmd_line == NULL || clist == NULL || strlen(cmd_line) == 0) {
+        printf(CMD_WARN_NO_CMD);
+>>>>>>> d80efd7c1aea8ad79c90227b9aab67e4d7540d0e
         return WARN_NO_CMDS;
     }
 
-    memset(clist, 0, sizeof(command_list_t));
-
-    char *cmd_copy = strdup(cmd_line); 
-    if (cmd_copy == NULL)
-    {
-        return WARN_NO_CMDS;
+    // Check for "dragon" command
+    if (strcmp(cmd_line, "dragon") == 0) {
+        print_dragon();
+        return OK;
     }
 
-    char *token = strtok(cmd_copy, PIPE_STRING);
-    int cmd_count = 0;
+    // Initialize command list
+    clist->num = 0;
+    memset(clist->commands, 0, sizeof(clist->commands));
 
-    while (token != NULL)
-    {
-        if (cmd_count >= CMD_MAX)
-        {
-            free(cmd_copy);
+    char *token;
+    char *rest = cmd_line;
+    int cmd_index = 0;
+
+    // Parse commands separated by '|'
+    while ((token = strtok_r(rest, PIPE_STRING, &rest))) {
+        if (cmd_index >= CMD_MAX) {
+            printf(CMD_ERR_PIPE_LIMIT, CMD_MAX);
             return ERR_TOO_MANY_COMMANDS;
         }
 
-        trim_spaces(token); 
-
-        if (strlen(token) == 0) 
-        {
-            free(cmd_copy);
-            return WARN_NO_CMDS; 
+        // Trim leading and trailing spaces
+        while (*token == SPACE_CHAR) {
+            token++;
         }
 
-        char *cmd_name = strtok(token, " ");
-        if (cmd_name == NULL)
-        {
-            free(cmd_copy);
-            return WARN_NO_CMDS;
+        if (strlen(token) >= EXE_MAX + ARG_MAX) {
+            return ERR_CMD_OR_ARGS_TOO_BIG;
         }
 
+<<<<<<< HEAD
         strncpy(clist->commands[cmd_count]._cmd_buffer, cmd_name, EXE_MAX);
         clist->commands[cmd_count]._cmd_buffer[EXE_MAX - 1] = '\0';
 
@@ -248,13 +304,35 @@ int build_cmd_list(char *cmd_line, command_list_t *clist)
         strncpy(clist->commands[cmd_count].argv[1], args, ARG_MAX);
         clist->commands[cmd_count].argv[1][ARG_MAX - 1] = '\0';
 
+=======
+        // Extract executable and arguments
+        char *space_pos = strchr(token, SPACE_CHAR);
+        if (space_pos != NULL) {
+            *space_pos = '\0';  // Split exe and args
+            strncpy(clist->commands[cmd_index].exe, token, EXE_MAX - 1);
+            strncpy(clist->commands[cmd_index].args, space_pos + 1, ARG_MAX - 1);
+        } else {
+            strncpy(clist->commands[cmd_index].exe, token, EXE_MAX - 1);
+            clist->commands[cmd_index].args[0] = '\0';  // No arguments
+>>>>>>> d80efd7c1aea8ad79c90227b9aab67e4d7540d0e
         }
 
-        cmd_count++;
-        token = strtok(NULL, PIPE_STRING); 
+        clist->num++;
+        cmd_index++;
     }
 
-    clist->num = cmd_count;
-    free(cmd_copy);
+    printf(CMD_OK_HEADER, clist->num);
+    for (int i = 0; i < clist->num; i++) {
+        if (strlen(clist->commands[i].args) > 0) {
+            printf("<%d> %s [%s]\n", i + 1, clist->commands[i].exe, clist->commands[i].args);
+        } else {
+            printf("<%d> %s\n", i + 1, clist->commands[i].exe);
+        }
+    }
+
     return OK;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> d80efd7c1aea8ad79c90227b9aab67e4d7540d0e

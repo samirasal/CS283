@@ -1,0 +1,12 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     dsh
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003788, symSize: 0x40 }
+  - { offsetInCU: 0x41, offset: 0x41, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100003788, symSize: 0x40 }
+  - { offsetInCU: 0x26, offset: 0x96, size: 0x8, addend: 0x0, symName: _trim_whitespace, symObjAddr: 0x0, symBinAddr: 0x1000037C8, symSize: 0x164 }
+  - { offsetInCU: 0x48, offset: 0xB8, size: 0x8, addend: 0x0, symName: _trim_whitespace, symObjAddr: 0x0, symBinAddr: 0x1000037C8, symSize: 0x164 }
+  - { offsetInCU: 0x88, offset: 0xF8, size: 0x8, addend: 0x0, symName: _tokenize_command, symObjAddr: 0x164, symBinAddr: 0x10000392C, symSize: 0x2C0 }
+  - { offsetInCU: 0xE8, offset: 0x158, size: 0x8, addend: 0x0, symName: _execute_single, symObjAddr: 0x424, symBinAddr: 0x100003BEC, symSize: 0x98 }
+  - { offsetInCU: 0x136, offset: 0x1A6, size: 0x8, addend: 0x0, symName: _exec_local_cmd_loop, symObjAddr: 0x4BC, symBinAddr: 0x100003C84, symSize: 0x1CC }
+...

@@ -136,6 +136,7 @@ int execute_pipeline(command_list_t *cmd_list) {
                 close(pipefd[1]);
             }
             execvp(cmd_list->commands[i].argv[0], cmd_list->commands[i].argv);
+            printf("\n");
             perror("execution error");
             exit(EXIT_FAILURE);
         } else {  
@@ -186,8 +187,15 @@ int exec_local_cmd_loop() {
     char *line = NULL;
     size_t bufsize = 0;
     
+    fflush(stdout);
+    printf("local mode\n");
+ 
+    
     while (1) {
-        printf("dsh3> ");
+        
+        printf("%s", SH_PROMPT);
+         
+
         if (getline(&line, &bufsize, stdin) == -1) {
             printf("\n");
             break;
@@ -203,7 +211,7 @@ int exec_local_cmd_loop() {
         
         // Built-in: exit command
         if (strcmp(line, "exit") == 0) {
-            printf("exiting...\n");
+           // printf("exiting...\n");
             break;
         }
         
@@ -243,9 +251,15 @@ int exec_local_cmd_loop() {
                 continue;
             }
             execute_single(&single_cmd);
+            
+           
+            printf("%s", SH_PROMPT);  
+            
+        fflush(stdout);
         }
     }
     
     free(line);
+
     return 0;
 }

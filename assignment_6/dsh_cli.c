@@ -122,10 +122,17 @@ int main(int argc, char *argv[]){
   parse_args(argc, argv, &cargs);
 
   switch(cargs.mode){
+   
     case MODE_LCLI:
-      printf("local mode\n");
+    
+    //printf("local mode\n");
+    //  fflush(stdout);
+    
+    
       rc = exec_local_cmd_loop();
+      
       break;
+     
     case MODE_SCLI:
       printf("socket client mode:  addr:%s:%d\n", cargs.ip, cargs.port);
       rc = exec_remote_cmd_loop(cargs.ip, cargs.port);
